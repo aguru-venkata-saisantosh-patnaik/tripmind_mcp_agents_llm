@@ -1,33 +1,34 @@
 # TripMind — Evaluation Results
 
-Three Llama 3.1 8B variants were trained using different supervision signals, then evaluated on 92 golden test cases from Indian domestic travel itineraries, plus 45 adversarial red-team prompts. The core question: **does richer teacher signal from agent reasoning traces produce a better travel optimizer than plain SFT on synthetic pairs?**
+Three Llama 3.1 8B variants were trained using different supervision signals, then evaluated on 92 golden test cases from Indian domestic travel itineraries, plus 45 adversarial red-team prompts. An untuned `llama3.1:8b` baseline was added post-hoc to quantify training lift. The core question: **does richer teacher signal from agent reasoning traces produce a better travel optimizer than plain SFT on synthetic pairs?**
 
 ---
 
-## The Three-Model Hypothesis
+## The Four-Model Comparison
 
-Each training approach tested a different idea:
+Each approach tested a different hypothesis:
 
+- **llama3.1:8b (baseline)** — Untuned Llama 3.1 8B. Establishes the pre-training floor and confirms that fine-tuning was necessary for structured output compliance.
 - **tripmind-ft** — Standard supervised fine-tuning on the 5,000 Phase 1 synthetic pairs (GPT-4o-mini teacher). Tests whether clean, validated <persona, optimized_itinerary> pairs are sufficient.
 - **tripmind-distill** — Knowledge distillation from 500 Phase 2 DeepSeek agent reasoning traces. Tests whether exposing the model to multi-step tool-calling chains improves generalization.
 - **tripmind-curriculum** — Two-stage curriculum: Phase 1 data first, then Phase 2 traces. Tests whether sequential training (domain knowledge before reasoning patterns) beats single-dataset approaches.
 
 ---
 
-## Results (92 golden test cases × 3 models)
+## Results (92 golden test cases × 4 models)
 
-| Metric | Target | tripmind-ft | tripmind-distill | tripmind-curriculum |
-|--------|--------|:-----------:|:----------------:|:-------------------:|
-| JSON valid | 85% | **100%** ✓ | 92.4% ✓ | 10.9% ✗ |
-| Savings found | 70% | **100%** ✓ | 98.1% ✓ | — ✗ |
-| Budget compliance | 80% | **98.7%** ✓ | — | — |
-| Schema compliance | 80% | **83.7%** ✓ | 0.0% ✗ | 0.0% ✗ |
-| Intent alignment | 55% | 32.2% ✗ | — | 41.8% ✗ |
-| ROUGE-L vs teacher | 25% | **43.6%** ✓ | 8.9% ✗ | 12.7% ✗ |
-| BERTScore F1 | 70% | **93.2%** ✓ | 73.8% ✓ | 73.4% ✓ |
-| Reasoning coherence | 65% | **72.3%** ✓ | 67.4% ✓ | 47.0% ✗ |
-| Grounding accuracy | 60% | 89.5% ✓ | 44.2% ✗ | **88.0%** ✓ |
-| Red-team pass | 80% | 53.3% ✗ | 46.7% ✗ | **60.0%** ✗ |
+| Metric | Target | baseline | tripmind-ft | tripmind-distill | tripmind-curriculum |
+|--------|--------|:--------:|:-----------:|:----------------:|:-------------------:|
+| JSON valid | 85% | 0.0% ✗ | **100%** ✓ | 92.4% ✓ | 10.9% ✗ |
+| Savings found | 70% | — ✗ | **100%** ✓ | 98.1% ✓ | — ✗ |
+| Budget compliance | 80% | — ✗ | **98.7%** ✓ | — | — |
+| Schema compliance | 80% | 0.0% ✗ | **83.7%** ✓ | 0.0% ✗ | 0.0% ✗ |
+| Intent alignment | 55% | — | 32.2% ✗ | — | 41.8% ✗ |
+| ROUGE-L vs teacher | 25% | 12.6% ✗ | **43.6%** ✓ | 8.9% ✗ | 12.7% ✗ |
+| BERTScore F1 | 70% | 80.5% ✓ | **93.2%** ✓ | 73.8% ✓ | 73.4% ✓ |
+| Reasoning coherence | 65% | — | **72.3%** ✓ | 67.4% ✓ | 47.0% ✗ |
+| Grounding accuracy | 60% | — | 89.5% ✓ | 44.2% ✗ | **88.0%** ✓ |
+| Red-team pass | 80% | — | 53.3% ✗ | 46.7% ✗ | **60.0%** ✗ |
 
 ### Head-to-head win rates (same 92 records, LLM judge)
 
@@ -38,6 +39,12 @@ Each training approach tested a different idea:
 ---
 
 ## Key Findings
+
+### 0. Baseline confirms training was necessary
+
+The untuned `llama3.1:8b` produced 0% valid JSON across all 92 test cases — it writes fluent natural language itineraries rather than structured output. Every structural metric (savings found, budget compliance, schema compliance) is unmeasurable as a result. This is the expected behavior of an instruction-tuned base model that has never seen the task's output schema.
+
+Interestingly, the baseline scores 0.805 BERTScore — above the 0.70 target — despite producing no valid JSON. This reveals a **BERTScore blind spot**: semantic embedding similarity rewards natural language that mentions the right cities and concepts, even if the output is completely unstructured. ROUGE-L (baseline: 0.126 vs ft: 0.436) is the more honest differentiator here, because n-gram overlap correctly penalizes outputs that don't match the reference format. The baseline ROUGE-L failing while BERTScore passes is a diagnostic finding worth knowing before deploying embedding-based metrics for structured-output tasks.
 
 ### 1. Fine-tuning dominated on structural correctness
 

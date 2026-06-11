@@ -13,7 +13,7 @@ Built for Indian domestic travel. Trains three SLMs (fine-tuned, distilled, curr
 | 1 | Synthetic data engine (5,000 pairs, gpt-4o-mini) | ✅ Complete |
 | 2 | Multi-agent orchestration + MCP servers (500 traces, DeepSeek) | ✅ Complete |
 | 3 | Three SLMs trained — Colab T4 (ft) + Lightning.ai A100 (distill, curriculum) | ✅ Complete |
-| 4 | Evaluation suite + red teaming (92 test cases × 4 models + 45 red team) | ✅ Complete |
+| 4 | Evaluation suite + red teaming (92 test cases × 3 trained + 1 baseline + 45 red team) | ✅ Complete |
 | 5 | FastAPI inference server — REST endpoints for all 4 models | 🔲 In Progress |
 
 ---
@@ -140,17 +140,20 @@ HuggingFace backups (LoRA adapters + GGUF):
 
 ## Phase 4 — Eval Results
 
-92 test cases × 3 trained models + 45 adversarial red-team prompts. Full narrative: [`RESULTS.md`](RESULTS.md).
+92 test cases × 4 models (3 trained + untuned baseline) + 45 adversarial red-team prompts. Full narrative: [`RESULTS.md`](RESULTS.md).
 
-| Metric | Target | tripmind-ft | tripmind-distill | tripmind-curriculum |
-|--------|:------:|:-----------:|:----------------:|:-------------------:|
-| JSON valid | 85% | **100%** ✓ | 92.4% ✓ | 10.9% ✗ |
-| Savings found | 70% | **100%** ✓ | 98.1% ✓ | — |
-| Budget compliance | 80% | **98.7%** ✓ | — | — |
-| Schema compliance | 80% | **83.7%** ✓ | 0.0% ✗ | 0.0% ✗ |
-| BERTScore F1 | 70% | **93.2%** ✓ | 73.8% ✓ | 73.4% ✓ |
-| Grounding accuracy | 60% | 89.5% ✓ | 44.2% ✗ | **88.0%** ✓ |
-| Red-team pass | 80% | 53.3% ✗ | 46.7% ✗ | **60.0%** ✗ |
+| Metric | Target | baseline | tripmind-ft | tripmind-distill | tripmind-curriculum |
+|--------|:------:|:--------:|:-----------:|:----------------:|:-------------------:|
+| JSON valid | 85% | 0.0% ✗ | **100%** ✓ | 92.4% ✓ | 10.9% ✗ |
+| Savings found | 70% | — ✗ | **100%** ✓ | 98.1% ✓ | — |
+| Budget compliance | 80% | — ✗ | **98.7%** ✓ | — | — |
+| Schema compliance | 80% | 0.0% ✗ | **83.7%** ✓ | 0.0% ✗ | 0.0% ✗ |
+| ROUGE-L | 25% | 12.6% ✗ | **43.6%** ✓ | 8.9% ✗ | 12.7% ✗ |
+| BERTScore F1 | 70% | 80.5%\* ✓ | **93.2%** ✓ | 73.8% ✓ | 73.4% ✓ |
+| Grounding accuracy | 60% | — | 89.5% ✓ | 44.2% ✗ | **88.0%** ✓ |
+| Red-team pass | 80% | — | 53.3% ✗ | 46.7% ✗ | **60.0%** ✗ |
+
+\* Baseline BERTScore passes the target despite 0% JSON validity — see RESULTS.md for why BERTScore is a weak signal for structured-output tasks.
 
 **Head-to-head:** ft beats distill 78%, ft beats curriculum 57%.
 
