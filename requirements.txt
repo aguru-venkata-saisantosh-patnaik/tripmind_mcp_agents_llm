@@ -33,5 +33,5 @@ diskcache>=5.6
 # ── Phase 4: Evals ────────────────────────────────────────────────────────────
 sentence-transformers>=3.0  # local intent alignment (no API)
 
-# ── Phase 5: Inference API (see phase5_serving/requirements.txt) ──────────────
-# fastapi uvicorn[standard] pydantic httpx  ← install from phase5_serving/
+# ── Phase 5: Inference API ────────────────────────────────────────────────────
+# fastapi, uvicorn, pydantic, httpx already listed above under Core/Phase 2

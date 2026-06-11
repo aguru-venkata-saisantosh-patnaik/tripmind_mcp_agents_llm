@@ -4,13 +4,9 @@ FastAPI server exposing the four TripMind models via REST.
 
 ## Setup
 
-Run in a **fresh virtual environment** (the base conda env has starlette 1.2.1 from MCP,
-which conflicts with FastAPI — isolate to avoid the version clash):
-
 ```bash
-python -m venv .venv-serving
-source .venv-serving/bin/activate      # Windows: .venv-serving\Scripts\activate
-pip install -r phase5_serving/requirements.txt
+# From the project root — all dependencies are in the central requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Start the server

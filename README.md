@@ -172,9 +172,8 @@ HuggingFace backups (LoRA adapters + GGUF):
 ## Phase 5 — Inference API
 
 ```bash
-# Install (use a fresh venv — base env has conflicting MCP/starlette versions)
-python -m venv .venv-serving && source .venv-serving/bin/activate
-pip install -r phase5_serving/requirements.txt
+# Install (from project root — all dependencies are in requirements.txt)
+pip install -r requirements.txt
 
 # Start
 uvicorn phase5_serving.api.main:app --reload --port 8000

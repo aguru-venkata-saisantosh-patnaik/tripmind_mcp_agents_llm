@@ -68,7 +68,7 @@ The baseline model (llama3.1:8b, 0% JSON validity) scored 0.805 BERTScore — ab
 
 **Problem: starlette version conflict between the MCP library and FastAPI.**  
 The project's base conda environment installs `starlette==1.2.1` as a transitive dependency of the `mcp` library. FastAPI 0.116+ requires starlette ≥0.27. The two are mutually incompatible in the same environment.  
-**Fix:** Created a dedicated `.venv-serving/` virtual environment for the inference API with `pip install -r phase5_serving/requirements.txt`. The Phase 2 agent pipeline and the Phase 5 API run in separate environments. This is documented in the Phase 5 README.
+**Fix:** Consolidated all dependencies into a single root `requirements.txt`. Pip resolves the starlette version automatically when installing into a clean environment (e.g. a fresh venv or Colab). The conflict only manifests when installing into an environment that already has the `mcp` library pre-installed at an incompatible starlette version — using `pip install -r requirements.txt` in a clean environment avoids the issue entirely.
 
 ---
 
