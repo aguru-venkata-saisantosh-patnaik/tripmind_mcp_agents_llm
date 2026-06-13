@@ -24,26 +24,21 @@ The project trains three Llama 3.1 8B LLMs via different supervision signals (SF
 
 ```
                       50k seed personas
-                              │
-                      GPT-4o-mini  ·  $4
+                              │  GPT-4o-mini  ·  $4
                               ▼
     5,000 validated (baseline, optimized) itinerary pairs
-                              │
-        DeepSeek V4 Flash multi-agent pipeline  ·  $4
+                              │  DeepSeek V4 Flash multi-agent pipeline  ·  $4
                               ▼
              500 grounded agent reasoning traces
-                              │
-        QLoRA fine-tuning  ·  Unsloth  ·  Llama 3.1 8B
+                              │  QLoRA fine-tuning  ·  Unsloth  ·  Llama 3.1 8B
                               ▼
      tripmind-ft           ← SFT on synthetic pairs
      tripmind-distill      ← distilled from agent traces
      tripmind-curriculum   ← Phase 1 → Phase 2 sequential
-                              │
-           92-case evaluation + 45 red-team prompts
+                              │  92-case evaluation + 45 red-team prompts
                               ▼
              Benchmark results across 10 metrics
-                              │
-                       FastAPI + Ollama
+                              │  FastAPI + Ollama
                               ▼
 REST inference API  ·  POST /optimize  ·  GET /results/summary
 ```
