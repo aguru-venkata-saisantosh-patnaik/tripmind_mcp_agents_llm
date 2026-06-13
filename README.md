@@ -1,6 +1,6 @@
 # TripMind
 
-Autonomous multi-agent AI travel optimizer that finds **Price-Pivot Points** — transit, accommodation, and activity substitutions that save ≥5% without degrading trip quality. Built for Indian domestic travel across 20 cities and 5 budget tiers.
+Autonomous multi-agent AI travel optimizer that finds **Price-Pivot Points** like transit, accommodation, and activity substitutions that save ≥5% without degrading trip quality. Built for Indian domestic travel across 20 cities and 5 budget tiers.
 
 The project trains three Llama 3.1 8B LLMs via different supervision signals (SFT, distillation, curriculum learning), benchmarks all three against an untuned baseline, and serves results through a REST API.
 
